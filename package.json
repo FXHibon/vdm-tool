@@ -1,0 +1,15 @@
+{
+  "name": "test-iadvize",
+  "version": "1.0.0",
+  "description": "developer test for iAdvize",
+  "main": "index.js",
+  "scripts": {
+    "test": "mocha"
+  },
+  "keywords": [
+    "iAdvize",
+    "VDM"
+  ],
+  "author": "FXHibon",
+  "license": "ISC"
+}
