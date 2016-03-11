@@ -2,21 +2,30 @@
  * Created by fx on 11/03/2016.
  */
 
-var conf = require('./package.json');
+var logger = require('debug')('vdm:app');
+var info = require('./package.json');
 var program = require('commander');
+var configuration = require('./configuration.json');
 
 program
-    .version(conf.version)
+    .version(info.version)
     .option('-f, --fetch', 'Retrieve VDM items from viedemerde.fr')
-    .option('-s, --serve', 'Serve local VMD items from local storage though REST API')
+    .option('-s, --server', 'Serve VDM items from local storage though REST API')
     .parse(process.argv);
 
+// Starts scrapper
 if (program.fetch) {
-    console.log('fetch');
-    require('scrapper')
+    logger('fetch');
+    require('./scrapper')(configuration);
 }
 
-if (program.serve) {
-    console.log('serve');
-    require('server');
+// Starts REST API
+if (program.server) {
+    logger('server');
+    require('./server')(configuration);
+}
+
+// Default action
+if (!program.fetch && !program.server) {
+    program.help();
 }

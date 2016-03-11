@@ -1,0 +1,5 @@
+{
+  "maxItems": 1,
+  "remoteUrl": "http://www.viedemerde.fr/?page=0",
+  "mongoUrl": "mongodb://localhost:27017/vdm"
+}
