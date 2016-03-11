@@ -11,5 +11,8 @@
     "VDM"
   ],
   "author": "FXHibon",
-  "license": "ISC"
+  "license": "ISC",
+  "dependencies": {
+    "commander": "2.9.0"
+  }
 }
