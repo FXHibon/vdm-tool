@@ -34,7 +34,7 @@ function _constructor(conf, cb) {
     async.waterfall([
         // DB connection
         function (cb) {
-            logger('Connecting to ', conf.mongoUrl);
+            logger('Connecting to ', conf.mongoUrl, conf.dbName);
             MongoClient.connect(conf.mongoUrl + conf.dbName, cb);
         },
 

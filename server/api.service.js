@@ -14,6 +14,7 @@ function _constructor(conf) {
     this.getPost = _getPost;
     this.getPosts = _getPosts;
     this.NotFound = _NotFound;
+    this.BadRequest = _BadRequest;
 
     var configuration = conf;
     var MongoClient = require('mongodb');
@@ -22,7 +23,7 @@ function _constructor(conf) {
 
     MongoClient.connect(configuration.mongoUrl + configuration.dbName, function (err, res) {
         if (err) throw err;
-        logger('Connected to DB');
+        logger('Connected to DB: ', configuration.mongoUrl + configuration.dbName);
         db = res;
     });
 
@@ -53,10 +54,34 @@ function _constructor(conf) {
 
     /**
      * Find all VDMs
+     * @param query Param: from, to, author
      * @param cb Callback
      */
-    function _getPosts(cb) {
-        db.collection('items').find({}).toArray(function (err, res) {
+    function _getPosts(query, cb) {
+        var findQuery = {};
+        if (query.author) {
+            findQuery.author = query.author;
+        }
+        var date;
+        if (query.from) {
+            date = new Date(query.from);
+            if (!(date instanceof Date)) {
+                cb(new _BadRequest(query.from + ' is not a valid date'));
+                return;
+            }
+            findQuery.date = {$gte: new Date(query.from)};
+        }
+        if (query.to) {
+            date = new Date(query.to);
+            if (!(date instanceof Date)) {
+                cb(new _BadRequest(query.to + ' is not a valid date'));
+                return;
+            }
+            if (!findQuery.date) findQuery.date = {};
+            findQuery.date.$lte = new Date(query.to);
+        }
+        logger('findQuery:', findQuery);
+        db.collection('items').find(findQuery).sort({date: -1}).toArray(function (err, res) {
             if (err) {
                 cb(err);
                 return;
@@ -69,19 +94,28 @@ function _constructor(conf) {
                 return item;
             });
             cb(null, {
-                posts: items,
-                count: items.length
+                count: items.length,
+                posts: items
             })
         });
     }
 
     /**
-     * Custom error
+     * Custom error: trigger when item is not found
      * @param msg Error message
      * @private
      */
     function _NotFound(msg) {
         this.message = msg;
+    }
+
+    /**
+     * Custom error: trigger when parameter is not valid
+     * @param msg Error message
+     * @private
+     */
+    function _BadRequest(msg) {
+        this.message;
     }
 
     return this;

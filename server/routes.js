@@ -17,13 +17,12 @@ function _constructor(conf) {
 
 
     router.get('/posts', function (req, resp) {
-        service.getPosts(function (err, items) {
+        service.getPosts(req.query, function (err, items) {
             resp.status(200).json(items);
         });
     });
 
     router.get('/posts/:id', function (req, resp) {
-        logger('getPost ', req.params);
         service.getPost(req.params.id, function (err, item) {
             var status, data;
             if (err) {

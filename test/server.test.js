@@ -12,7 +12,6 @@ describe('api.service', function () {
 
     var apiService = require('../server/api.service')(conf);
 
-
     // Import test data
     before(function (done) {
         async.waterfall([
@@ -25,6 +24,12 @@ describe('api.service', function () {
                 });
             },
             function (db, cb) {
+
+                testData = testData.map(function (item) {
+                    item.date = new Date(item.date);
+                    return item;
+                });
+
                 db.collection('items').insertMany(testData, function (err) {
                     cb(err, db);
                 });
@@ -41,14 +46,59 @@ describe('api.service', function () {
     describe('#getPosts()', function () {
 
         it('should find all posts', function (done) {
-            apiService.getPosts(function (err, items) {
+            apiService.getPosts({}, function (err, items) {
                 should.exist(items);
                 items.should.have.property('posts').which.is.an.Array();
                 items.should.have.property('count').which.is.an.Number();
-                items.posts.length.should.be.exactly(5);
-                items.count.should.be.exactly(5);
+                items.posts.length.should.be.exactly(testData.length);
+                items.count.should.be.exactly(testData.length);
                 done()
             });
+        });
+
+        it('should retrieve one VDM from Greys92', function (done) {
+            apiService.getPosts({author: 'Greys92'}, function (err, res) {
+                should.not.exist(err);
+                should.exist(res);
+                res.should.have.property('count').which.is.a.Number();
+                res.should.have.property('posts').which.is.an.Array();
+                res.count.should.be.exactly(1);
+                res.posts[0].author.should.be.exactly('Greys92');
+                done();
+            });
+        });
+
+        it('should retrieve only a subset of VDM starting from a date', function (done) {
+            apiService.getPosts({from: '2016-02-11'}, function (err, res) {
+                should.not.exist(err);
+                should.exist(res);
+                res.should.have.property('count').which.is.a.Number();
+                res.should.have.property('posts').which.is.an.Array();
+                res.count.should.be.exactly(3);
+                done();
+            })
+        });
+
+        it('should retrieve only a subset of VDM older than given date', function (done) {
+            apiService.getPosts({to: '2016-01-12'}, function (err, res) {
+                should.not.exist(err);
+                should.exist(res);
+                res.should.have.property('count').which.is.a.Number();
+                res.should.have.property('posts').which.is.an.Array();
+                res.count.should.be.exactly(2);
+                done();
+            })
+        });
+
+        it('should retrieve only a subset of VDM between two dates', function (done) {
+            apiService.getPosts({from: '2015-12-11', to: '2016-02-12'}, function (err, res) {
+                should.not.exist(err);
+                should.exist(res);
+                res.should.have.property('count').which.is.a.Number();
+                res.should.have.property('posts').which.is.an.Array();
+                res.count.should.be.exactly(2);
+                done();
+            })
         });
 
     });
