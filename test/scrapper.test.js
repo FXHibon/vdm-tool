@@ -100,7 +100,7 @@ describe('Scrapper', function () {
                         should.exist(doc);
                         doc.should.have.property('_id').which.is.String();
                         doc.should.have.property('content').which.is.String();
-                        doc.content.substr(doc.content.length - 3, 3).should.be.exactly('VDM');
+                        doc.content.should.endWith('VDM');
                         doc.should.have.property('author').which.is.String();
                         doc.should.have.property('date').which.is.Date();
                         db.close();
