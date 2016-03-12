@@ -65,7 +65,7 @@ function _constructor(conf) {
         var date;
         if (query.from) {
             date = new Date(query.from);
-            if (!(date instanceof Date)) {
+            if (date == 'Invalid Date') {
                 cb(new _BadRequest(query.from + ' is not a valid date'));
                 return;
             }
@@ -73,7 +73,7 @@ function _constructor(conf) {
         }
         if (query.to) {
             date = new Date(query.to);
-            if (!(date instanceof Date)) {
+            if (date == 'Invalid Date') {
                 cb(new _BadRequest(query.to + ' is not a valid date'));
                 return;
             }

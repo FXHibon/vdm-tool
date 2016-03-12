@@ -101,6 +101,24 @@ describe('api.service', function () {
             })
         });
 
+        it('should trigger BadRequest because of the date', function (done) {
+            apiService.getPosts({from: '1earg'}, function (err, res) {
+                should.not.exist(res);
+                should.exist(err);
+                err.should.be.instanceOf(apiService.BadRequest);
+                done()
+            })
+        });
+
+        it('should trigger BadRequest because of the date', function (done) {
+            apiService.getPosts({to: '1earg'}, function (err, res) {
+                should.not.exist(res);
+                should.exist(err);
+                err.should.be.instanceOf(apiService.BadRequest);
+                done()
+            })
+        });
+
     });
 
     describe('#getPost()', function () {
