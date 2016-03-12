@@ -16,13 +16,13 @@ program
 // Starts scrapper
 if (program.fetch) {
     logger('fetch');
-    require('./scrapper')(configuration);
+    require('./scrapper/scrapper')(configuration);
 }
 
 // Starts REST API
 if (program.server) {
     logger('server');
-    require('./server')(configuration);
+    require('./server/server')(configuration);
 }
 
 // Default action

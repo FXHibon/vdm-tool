@@ -2,11 +2,20 @@
  * Created by fx on 11/03/2016.
  */
 
+/**
+ * Exports constructor
+ * @type {_constructor}
+ */
 module.exports = _constructor;
 
-
-function _constructor(conf) {
-    var debug = require('debug')('vdm:scrapper');
+/**
+ * Construct and launch the scrapper
+ * @param conf Configuration
+ * @param cb Call when scrapper is done. Optional param
+ * @private
+ */
+function _constructor(conf, cb) {
+    var logger = require('debug')('vdm:scrapper');
     var async = require('async');
     var osmosis = require('osmosis');
     var MongoClient = require('mongodb').MongoClient;
@@ -14,49 +23,35 @@ function _constructor(conf) {
     var MAX = conf.maxItems;
     var URL = conf.remoteUrl;
 
+    var finalCb = cb;
+
     var count = 0;
 
-    /**
-     * Extract/parse date from given 'dateAndAuthor' field
-     * @param dateAndAuthor
-     * @returns {Date}
-     */
-    var parseDate = function (dateAndAuthor) {
-        var pattern = /(\d{2})\/(\d{2})\/(\d{4}) à (\d{2}:\d{2})/;
-        var tmpStr = dateAndAuthor.substr(3, 18);
-        tmpStr = tmpStr.replace(pattern, '$3-$2-$1T$4');
-        return new Date(tmpStr);
-    };
+    var utils = require('./scrapper-utils');
 
-    /**
-     * Extract author from given 'dateAndAuthor' field
-     * @param dateAndAuthor
-     * @returns {string|*}
-     */
-    var parseAuthor = function (dateAndAuthor) {
-        var sepIndex = dateAndAuthor.indexOf('par ') + 'par '.length;
-        var tmpStr = dateAndAuthor.substr(sepIndex);
-        var finalSep = tmpStr.lastIndexOf('(');
-        if (finalSep != -1) {
-            tmpStr = tmpStr.substr(0, finalSep - 1);
-        }
-        return tmpStr;
-    };
+    var parseDate = utils.parseDate;
+    var parseAuthor = utils.parseAuthor;
 
     async.waterfall([
+        // DB connection
         function (cb) {
-            debug('Connecting to ', conf.mongoUrl);
+            logger('Connecting to ', conf.mongoUrl);
             MongoClient.connect(conf.mongoUrl, cb);
         },
+
+        // DB Cleaning
         function (db, cb) {
-            debug('Connected to db. Cleaning collection...');
+            logger('Connected to db. Cleaning collection...');
             var collection = db.collection('items');
             collection.removeMany({}, function (err) {
                 cb(err, db, collection);
             })
         },
+
+        // Scrapping
         function (db, collection, cb) {
-            debug('Starting VDM scrapper');
+            logger('Starting VDM scrapper');
+            var items = [];
             var instance = osmosis
                 .get(URL)
                 .find('.post.article')
@@ -66,8 +61,8 @@ function _constructor(conf) {
                     dateAndAuthor: '.date .right_part p[2]'
                 })
                 .paginate('.pagination ul.right li[2] a', 15)
-                .data(function (vdmItem) {
-                    debug('VDM ', count + 1, ' / ', MAX);
+                .then(function (context, vdmItem) {
+                    logger('VDM ', count + 1, ' / ', MAX);
 
                     // Format fields: split 'dateAndAuthor' field into 2 individuals fields
                     vdmItem.date = parseDate(vdmItem.dateAndAuthor);
@@ -75,18 +70,33 @@ function _constructor(conf) {
                     delete vdmItem.dateAndAuthor;
 
                     // Save
-                    collection.insert(vdmItem);
+                    items.push(vdmItem);
 
                     // End condition
                     if (++count >= MAX) {
-                        debug(MAX, ' items fetched, stopping scraper');
-                        db.close();
+                        logger(MAX, ' items fetched, stopping scraper');
                         instance.stop();
-                        cb(null);
+                        cb(null, db, collection, items);
                     }
                 });
+        },
+
+        // Saving into db
+        function (db, collection, items, cb) {
+            logger('Saving ', items.length, ' items into db');
+            collection.insertMany(items, function (err) {
+                err && cb(err);
+                db.close();
+                cb(null)
+            });
         }
+
     ], function (err) {
-        if (err) throw err;
+        logger('Scrapper done');
+        if (finalCb) {
+            finalCb(err);
+        } else if (err) {
+            throw err;
+        }
     });
 }
