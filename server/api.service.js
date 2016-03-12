@@ -23,7 +23,7 @@ function _constructor(conf) {
 
     MongoClient.connect(configuration.mongoUrl + configuration.dbName, function (err, res) {
         if (err) throw err;
-        logger('Connected to DB: ', configuration.mongoUrl + configuration.dbName);
+        logger('Connected to DB: ' + configuration.mongoUrl + configuration.dbName);
         db = res;
     });
 
@@ -80,7 +80,7 @@ function _constructor(conf) {
             if (!findQuery.date) findQuery.date = {};
             findQuery.date.$lte = new Date(query.to);
         }
-        logger('findQuery:', findQuery);
+
         db.collection('items').find(findQuery).sort({date: -1}).toArray(function (err, res) {
             if (err) {
                 cb(err);

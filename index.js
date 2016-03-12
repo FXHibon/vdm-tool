@@ -1,8 +1,10 @@
+#!/usr/bin/env node
+
 /**
  * Created by fx on 11/03/2016.
  * Application entry point
- */
 
+ */
 var logger = require('debug')('vdm:app');
 var info = require('./package.json');
 var program = require('commander');

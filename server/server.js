@@ -23,7 +23,8 @@ function _constructor(conf) {
     app.use('/api', routes);
 
     app.listen(port, function () {
-        logger('API listening on ', port);
+        logger('API listening on ' + port);
+        logger('Try http://localhost:' + port + '/api/posts');
     });
 }
 

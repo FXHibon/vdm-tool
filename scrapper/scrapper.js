@@ -34,7 +34,7 @@ function _constructor(conf, cb) {
     async.waterfall([
         // DB connection
         function (cb) {
-            logger('Connecting to ', conf.mongoUrl, conf.dbName);
+            logger('Connecting to ' + conf.mongoUrl, conf.dbName);
             MongoClient.connect(conf.mongoUrl + conf.dbName, cb);
         },
 
@@ -68,7 +68,7 @@ function _constructor(conf, cb) {
 
                     // End condition
                     if (++count >= MAX) {
-                        logger(MAX, ' items fetched, stopping scraper');
+                        logger(MAX + ' items fetched, stopping scraper');
                         instance.stop();
                         cb(null, db, collection, items);
                     }
@@ -77,7 +77,7 @@ function _constructor(conf, cb) {
 
         // Saving into db
         function (db, collection, items, cb) {
-            logger('Saving ', items.length, ' items into db');
+            logger('Saving ' + items.length + ' items into db');
             collection.insertMany(items, function (err) {
                 err && cb(err);
                 db.close();

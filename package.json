@@ -1,14 +1,18 @@
 {
-  "name": "test-iadvize",
+  "name": "vdm-tool",
   "version": "1.0.0",
-  "description": "developer test for iAdvize",
+  "description": "VDM scrapper + local API",
   "main": "index.js",
+  "repository": "https://github.com/FXHibon/vdm-tool",
   "scripts": {
     "test": "mocha"
   },
   "keywords": [
     "iAdvize",
-    "VDM"
+    "VDM",
+    "REST API",
+    "MongoDb",
+    "scrapper"
   ],
   "author": "FXHibon",
   "license": "ISC",
@@ -24,5 +28,8 @@
   "devDependencies": {
     "mocha": "2.4.5",
     "should": "8.2.2"
+  },
+  "bin": {
+    "vdm-tool": "index.js"
   }
 }
