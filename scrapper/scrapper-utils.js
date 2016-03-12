@@ -42,7 +42,7 @@ function _parseAuthor(dateAndAuthor) {
  */
 function _formatVdmItem(vdmItem) {
     var formatedItem = {
-        _id: vdmItem._id,
+        _id: parseInt(vdmItem._id),
         content: vdmItem.content,
         author: _parseAuthor(vdmItem.dateAndAuthor),
         date: _parseDate(vdmItem.dateAndAuthor)

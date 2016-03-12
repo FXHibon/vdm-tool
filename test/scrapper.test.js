@@ -33,11 +33,12 @@ describe('Scrapper', function () {
         describe('#formatVdmItem()', function () {
             it('should format an item', function () {
                 var formated = utils.formatVdmItem({
-                    _id: '123456789',
+                    _id: 123456789,
                     content: 'This is a VDM',
                     dateAndAuthor: 'Le 11/03/2016 à 10:51 - par oups'
                 });
 
+                formated.should.have.property('_id').which.is.a.Number();
                 formated.should.have.property('date').which.is.a.Date();
                 formated.should.have.property('author').which.is.a.String();
                 formated.should.not.have.property('dateAndAuthor');
@@ -51,20 +52,18 @@ describe('Scrapper', function () {
         describe('#constructor()', function () {
 
             var scrapper;
-            var conf;
+            var conf = require('../configuration.test.json');
             beforeEach(function () {
                 scrapper = require('../scrapper/scrapper');
-                conf = require('../configuration.json');
             });
 
-            it('should scrap 10 items', function (done) {
-                conf.maxItems = 10;
+            it('should scrap ' + conf.maxItems + ' items', function (done) {
                 async.waterfall([
                     function (cb) {
                         scrapper(conf, cb);
                     },
                     function (cb) {
-                        MongoClient.connect(conf.mongoUrl, cb);
+                        MongoClient.connect(conf.mongoUrl + conf.dbName, cb);
                     },
                     function (db, cb) {
                         db.collection('items').count({}, {}, function (err, res) {
@@ -73,7 +72,7 @@ describe('Scrapper', function () {
                     },
                     function (count, db, cb) {
                         should.exist(count);
-                        count.should.be.exactly(10);
+                        count.should.be.exactly(conf.maxItems);
                         db.close();
                         cb();
                     }
@@ -89,7 +88,7 @@ describe('Scrapper', function () {
                         scrapper(conf, cb);
                     },
                     function (cb) {
-                        MongoClient.connect(conf.mongoUrl, cb);
+                        MongoClient.connect(conf.mongoUrl + conf.dbName, cb);
                     },
                     function (db, cb) {
                         db.collection('items').findOne({}, function (err, doc) {
@@ -98,7 +97,7 @@ describe('Scrapper', function () {
                     },
                     function (doc, db, cb) {
                         should.exist(doc);
-                        doc.should.have.property('_id').which.is.String();
+                        doc.should.have.property('_id').which.is.Number();
                         doc.should.have.property('content').which.is.String();
                         doc.content.should.endWith('VDM');
                         doc.should.have.property('author').which.is.String();

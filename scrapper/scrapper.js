@@ -35,7 +35,7 @@ function _constructor(conf, cb) {
         // DB connection
         function (cb) {
             logger('Connecting to ', conf.mongoUrl);
-            MongoClient.connect(conf.mongoUrl, cb);
+            MongoClient.connect(conf.mongoUrl + conf.dbName, cb);
         },
 
         // DB Cleaning
@@ -53,16 +53,15 @@ function _constructor(conf, cb) {
             var items = [];
             var instance = osmosis
                 .get(URL)
+                .paginate('.pagination ul.right li[2] a')
                 .find('.post.article')
                 .set({
                     _id: '@id',
                     content: 'child::*',
                     dateAndAuthor: '.date .right_part p[2]'
                 })
-                .paginate('.pagination ul.right li[2] a', 15)
                 .data(function (vdmItem) {
-                    logger('VDM ', count + 1, ' / ', MAX);
-
+                    logger('VDM(' + vdmItem._id + ') ', count + 1, ' / ', MAX);
                     var formatedVdm = formatVdmItem(vdmItem);
                     // Save
                     items.push(formatedVdm);
@@ -82,7 +81,7 @@ function _constructor(conf, cb) {
             collection.insertMany(items, function (err) {
                 err && cb(err);
                 db.close();
-                cb(null)
+                cb()
             });
         }
 

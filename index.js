@@ -1,5 +1,6 @@
 /**
  * Created by fx on 11/03/2016.
+ * Application entry point
  */
 
 var logger = require('debug')('vdm:app');
@@ -22,7 +23,7 @@ if (program.fetch) {
 // Starts REST API
 if (program.server) {
     logger('server');
-    require('./server/server');
+    require('./server/server')(configuration);
 }
 
 // Default action

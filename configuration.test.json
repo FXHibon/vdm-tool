@@ -1,0 +1,7 @@
+{
+  "maxItems": 25,
+  "remoteUrl": "http://www.viedemerde.fr/?page=0",
+  "mongoUrl": "mongodb://localhost:27017/",
+  "dbName": "test",
+  "port": 3000
+}
