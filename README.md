@@ -1,11 +1,11 @@
-# vdm-tools
+# vdm-tool
 
 ### Scrap and serve VDM from [http://viedemerde](http://viedemerde.fr)
 
 ## Installation
 ```bash
-git clone https://github.com/FXHibon/vdm-tools
-cd vdm-tools
+git clone https://github.com/FXHibon/vdm-tool
+cd vdm-tool
 npm install
 ```
 
