@@ -5,19 +5,19 @@
 var should = require('should');
 var utils = require('../scrapper/scrapper-utils');
 var async = require('async');
-var MongClient = require('mongodb');
+var MongoClient = require('mongodb');
 
 describe('Scrapper', function () {
 
     describe('utils', function () {
 
             describe('#parseAuthor()', function () {
-                it('should works', function () {
+                it('should extract \'unPseudo\'', function () {
                     var res = utils.parseAuthor(' - par unPseudo');
                     res.should.be.exactly('unPseudo');
                 });
 
-                it('should works', function () {
+                it('should extracts \'Anonyme\'', function () {
                     var res = utils.parseAuthor(' - par Anonyme (femme)');
                     res.should.be.exactly('Anonyme');
                 });
@@ -33,41 +33,70 @@ describe('Scrapper', function () {
     );
 
     describe('scrapper', function () {
+        describe('#constructor()', function () {
 
-        var scrapper;
-        var conf;
-        beforeEach(function () {
-            scrapper = require('../scrapper/scrapper');
-            conf = require('../configuration.json');
-        });
-
-        it('should scrap 10 items', function (done) {
-            conf.maxItems = 10;
-            async.waterfall([
-                function (cb) {
-                    scrapper(conf, cb);
-                },
-                function (cb) {
-                    MongClient.connect(conf.mongoUrl, cb);
-                },
-                function (db, cb) {
-                    db.collection('items').count({}, {}, function (err, res) {
-                        cb(err, res, db);
-                    });
-                },
-                function (count, db, cb) {
-                    should.exist(count);
-                    count.should.be.exactly(10);
-                    db.close();
-                    cb();
-                }
-            ], function (err) {
-                should.not.exist(err);
-                done();
+            var scrapper;
+            var conf;
+            beforeEach(function () {
+                scrapper = require('../scrapper/scrapper');
+                conf = require('../configuration.json');
             });
-        })
-    });
 
+            it('should scrap 10 items', function (done) {
+                conf.maxItems = 10;
+                async.waterfall([
+                    function (cb) {
+                        scrapper(conf, cb);
+                    },
+                    function (cb) {
+                        MongoClient.connect(conf.mongoUrl, cb);
+                    },
+                    function (db, cb) {
+                        db.collection('items').count({}, {}, function (err, res) {
+                            cb(err, res, db);
+                        });
+                    },
+                    function (count, db, cb) {
+                        should.exist(count);
+                        count.should.be.exactly(10);
+                        db.close();
+                        cb();
+                    }
+                ], function (err) {
+                    done(err);
+                });
+            });
+
+            it('should format item correctly', function (done) {
+                async.waterfall([
+                    function (cb) {
+                        conf.maxItems = 1;
+                        scrapper(conf, cb);
+                    },
+                    function (cb) {
+                        MongoClient.connect(conf.mongoUrl, cb);
+                    },
+                    function (db, cb) {
+                        db.collection('items').findOne({}, function (err, doc) {
+                            cb(err, doc, db);
+                        });
+                    },
+                    function (doc, db, cb) {
+                        should.exist(doc);
+                        doc.should.have.property('_id').which.is.String();
+                        doc.should.have.property('content').which.is.String();
+                        doc.content.substr(doc.content.length - 3, 3).should.be.exactly('VDM');
+                        doc.should.have.property('author').which.is.String();
+                        doc.should.have.property('date').which.is.Date();
+                        db.close();
+                        cb();
+                    }
+                ], function (err) {
+                    done(err);
+                });
+            });
+        });
+    });
 });
 
 
