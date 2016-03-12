@@ -115,7 +115,7 @@ function _constructor(conf) {
      * @private
      */
     function _BadRequest(msg) {
-        this.message;
+        this.message = msg;
     }
 
     return this;

@@ -18,7 +18,19 @@ function _constructor(conf) {
 
     router.get('/posts', function (req, resp) {
         service.getPosts(req.query, function (err, items) {
-            resp.status(200).json(items);
+            var status, data;
+            if (err) {
+                data = err;
+                if (err instanceof service.BadRequest) {
+                    status = 400;
+                } else {
+                    status = 500;
+                }
+            } else {
+                status = 200;
+                data = items;
+            }
+            resp.status(status).json(data);
         });
     });
 
