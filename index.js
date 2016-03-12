@@ -22,7 +22,7 @@ if (program.fetch) {
 // Starts REST API
 if (program.server) {
     logger('server');
-    require('./server/server')(configuration);
+    require('./server/server');
 }
 
 // Default action

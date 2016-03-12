@@ -29,8 +29,7 @@ function _constructor(conf, cb) {
 
     var utils = require('./scrapper-utils');
 
-    var parseDate = utils.parseDate;
-    var parseAuthor = utils.parseAuthor;
+    var formatVdmItem = utils.formatVdmItem;
 
     async.waterfall([
         // DB connection
@@ -61,16 +60,12 @@ function _constructor(conf, cb) {
                     dateAndAuthor: '.date .right_part p[2]'
                 })
                 .paginate('.pagination ul.right li[2] a', 15)
-                .then(function (context, vdmItem) {
+                .data(function (vdmItem) {
                     logger('VDM ', count + 1, ' / ', MAX);
 
-                    // Format fields: split 'dateAndAuthor' field into 2 individuals fields
-                    vdmItem.date = parseDate(vdmItem.dateAndAuthor);
-                    vdmItem.author = parseAuthor(vdmItem.dateAndAuthor);
-                    delete vdmItem.dateAndAuthor;
-
+                    var formatedVdm = formatVdmItem(vdmItem);
                     // Save
-                    items.push(vdmItem);
+                    items.push(formatedVdm);
 
                     // End condition
                     if (++count >= MAX) {

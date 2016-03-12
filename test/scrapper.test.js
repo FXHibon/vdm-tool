@@ -29,6 +29,21 @@ describe('Scrapper', function () {
                     myDate.should.not.be.eql('Invalid Date');
                 })
             });
+
+        describe('#formatVdmItem()', function () {
+            it('should format an item', function () {
+                var formated = utils.formatVdmItem({
+                    _id: '123456789',
+                    content: 'This is a VDM',
+                    dateAndAuthor: 'Le 11/03/2016 à 10:51 - par oups'
+                });
+
+                formated.should.have.property('date').which.is.a.Date();
+                formated.should.have.property('author').which.is.a.String();
+                formated.should.not.have.property('dateAndAuthor');
+            });
+        });
+
         }
     );
 
