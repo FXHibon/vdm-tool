@@ -32,7 +32,7 @@ function _constructor(conf) {
      * @param cb Callback
      */
     function _getPost(id, cb) {
-        db.collection('items').findOne({_id: id}, function (err, res) {
+        db.collection('items').findOne({_id: parseInt(id)}, function (err, res) {
             if (err) {
                 cb(err);
                 return;
@@ -45,7 +45,7 @@ function _constructor(conf) {
                     post: res
                 });
             } else {
-                cb(new _NotFound(id, ' not found'));
+                cb(new _NotFound(id + ' not found'));
             }
 
         });
