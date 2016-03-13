@@ -2,6 +2,10 @@
  * Exposes REST API to access VDM items
  */
 
+/**
+ * Exports constructor
+ * @type {_constructor}
+ */
 module.exports = _constructor;
 
 /**

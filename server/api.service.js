@@ -2,15 +2,20 @@
  * VDM service for accessing VDM items
  */
 
+/**
+ * Exports constructor
+ * @type {_constructor}
+ */
 module.exports = _constructor;
 
 /**
- * Construct API service
+ * Constructs API service
  * @param conf Configuration
  * @returns {_constructor}
  * @private
  */
 function _constructor(conf) {
+
     this.getPost = _getPost;
     this.getPosts = _getPosts;
     this.NotFound = _NotFound;
@@ -28,7 +33,7 @@ function _constructor(conf) {
     });
 
     /**
-     * Find the VDM matching given id
+     * Find the VDM item matching given id
      * @param id Id to find
      * @param cb Callback
      */
@@ -58,10 +63,13 @@ function _constructor(conf) {
      * @param cb Callback
      */
     function _getPosts(query, cb) {
+
         var findQuery = {};
+
         if (query.author) {
             findQuery.author = query.author;
         }
+
         var date;
         if (query.from) {
             date = new Date(query.from);

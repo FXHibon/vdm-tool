@@ -2,10 +2,14 @@
  * Created by fx on 11/03/2016.
  */
 
+/**
+ * Exports constructor
+ * @type {_constructor}
+ */
 module.exports = _constructor;
 
 /**
- * Constructs server
+ * Build server
  * @param conf Configuration
  * @private
  */

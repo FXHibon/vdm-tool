@@ -9,7 +9,7 @@
 module.exports = _constructor;
 
 /**
- * Construct and launch the scrapper
+ * Constructs and launch the scrapper
  * @param conf Configuration
  * @param cb Call when scrapper is done. Optional param
  * @private
@@ -62,11 +62,14 @@ function _constructor(conf, cb) {
                 })
                 .data(function (vdmItem) {
                     logger('VDM(' + vdmItem._id + ') ' + (count + 1) + ' / ' + MAX);
+
+                    //Format VDM item
                     var formatedVdm = formatVdmItem(vdmItem);
-                    // Save
+
+                    // Save VDM item
                     items.push(formatedVdm);
 
-                    // End condition
+                    // Stop when MAX VDM items are fetched
                     if (++count >= MAX) {
                         logger(MAX + ' items fetched, stopping scraper');
                         instance.stop();

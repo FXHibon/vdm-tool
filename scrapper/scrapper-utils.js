@@ -37,15 +37,14 @@ function _parseAuthor(dateAndAuthor) {
 /**
  *  Format vdm item: split 'dateAndAuthor' field into two separated fields
  * @param vdmItem
- * @returns {{_id: (string), content: (string), author: (string), date: (Date)}}
+ * @returns {{_id: (Number), content: (string), author: (string), date: (Date)}}
  * @private
  */
 function _formatVdmItem(vdmItem) {
-    var formatedItem = {
+    return {
         _id: parseInt(vdmItem._id),
         content: vdmItem.content,
         author: _parseAuthor(vdmItem.dateAndAuthor),
         date: _parseDate(vdmItem.dateAndAuthor)
     };
-    return formatedItem;
 }
