@@ -61,7 +61,7 @@ function _constructor(conf, cb) {
                     dateAndAuthor: '.date .right_part p[2]'
                 })
                 .data(function (vdmItem) {
-                    logger('VDM(' + vdmItem._id + ') ', count + 1, ' / ', MAX);
+                    logger('VDM(' + vdmItem._id + ') ' + (count + 1) + ' / ' + MAX);
                     var formatedVdm = formatVdmItem(vdmItem);
                     // Save
                     items.push(formatedVdm);
