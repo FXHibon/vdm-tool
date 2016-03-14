@@ -22,11 +22,16 @@ Before starting vdm-tools, ensure you have a MongoDb instance running.
 DB connection url can be modified in config file
 
 ### Scrap
+Fetch VDM from viedemerde, limited by the config (200 by default).
+Items are stored in local mongodb
 ```bash
 ./index.js --fetch
 ```
 
 ### Serve
+Serve all fetched VDM through REST API.
+See end-points description below
+
 ```bash
 ./index.js --serve
 ```
