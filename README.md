@@ -36,7 +36,6 @@ DB connection url can be modified in config file
 * __/api/posts?from=x__: list all VDM after x
 * __/api/posts?to=x__: list all VDM before x
 * __/api/posts?from=x&to=y__: list all VDM between x and y
-* __/api/posts__: list all VDM
 * __/api/posts/:id__: get one VDM
 
 ### Display help
